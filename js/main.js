@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const canvas = document.getElementById('canvas');
     
     // Initialize WebGL and load shaders
-    const {gl, shaderProgram} = await initGL(canvas);
+    const {gl, shaderProgram} = initGL(canvas);
 
     // Load the model data
     let modelData = await loadOBJ("./obj/cow.obj");

@@ -29,4 +29,4 @@ async function loadOBJ(path) {
     } catch (error) {
         throw error;
     }
-}
+};
