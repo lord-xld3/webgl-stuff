@@ -9,20 +9,33 @@ document.addEventListener("DOMContentLoaded", function () {
         alert('WebGL is not supported in your browser.');
     }
 
+    gl.enable(gl.DEPTH_TEST);
+    
     // Vertex and fragment shader code
     const vertexShaderSource = `
         attribute vec4 coordinates;
         uniform mat4 modelViewProjection;
+        varying vec3 fragOrientation;
+        
         void main(void) {
             gl_Position = modelViewProjection * coordinates;
+            
+            // Calculate orientation (rotation)
+            mat4 rotationMatrix = mat4(modelViewProjection);
+            fragOrientation = mat3(rotationMatrix) * coordinates.xyz;
         }
     `;
 
     const fragmentShaderSource = `
         precision highp float;
+        varying vec3 fragOrientation;
         uniform vec4 color;
+        
         void main(void) {
-            gl_FragColor = color;
+            // Use fragOrientation to compute the fragment color
+            vec3 orientation = normalize(fragOrientation);
+            vec3 colorValues = (orientation + 1.0) * 0.5; // Map orientation to color values
+            gl_FragColor = vec4(colorValues, 1.0); // Alpha is fully opaque
         }
     `;
 
