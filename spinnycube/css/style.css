@@ -9,11 +9,3 @@ body {
     display: block;
     position: absolute;
 }
-#overlay {
-    position: absolute;
-    top: 1vh;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
