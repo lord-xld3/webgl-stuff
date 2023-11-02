@@ -81,15 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
     gl.vertexAttribPointer(coordinates, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinates);
 
-    // Set initial rotation angle
-    let angle = 0;
-
     // Create the model matrix here
     const modelMatrix = mat4.create();
-
-    // Define variables for mouse interaction
-    let cubeRotationX = 0;
-    let cubeRotationY = 0;
 
     // Define variables for rotational velocity
     let rotationVelocityX = 0;
@@ -142,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const projectionMatrix = mat4.create();
 
         // Set up view and projection matrices (you can customize these)
-        mat4.lookAt(viewMatrix, [3, 3, 7], [0, 0, 0], [0, 1, 0]);
+        mat4.lookAt(viewMatrix, [6, 6, 6], [0, 0, 0], [0, 1, 0]);
         mat4.perspective(projectionMatrix, 45, canvas.width / canvas.height, 0.1, 100.0);
 
         // Combine matrices to get the model-view-projection matrix
