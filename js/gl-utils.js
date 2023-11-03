@@ -1,3 +1,33 @@
+// Compile, link, and load shaders
+function makeProgram(gl, vertexShaderSource, fragmentShaderSource) {
+    // Create the vertex shader
+    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexShaderSource);
+    gl.compileShader(vertexShader);
+
+    // Create the fragment shader
+    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, fragmentShaderSource);
+    gl.compileShader(fragmentShader);
+
+    // Create the shader program
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+
+    // Link the shader program
+    gl.linkProgram(shaderProgram);
+
+    return shaderProgram;
+}
+
+function makeBuffer(gl, data, bufferType) {
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(bufferType, buffer);
+    gl.bufferData(bufferType, data, gl.STATIC_DRAW);
+    return buffer;
+}
+
 // Load vertex and index data from an .obj file
 async function loadOBJ(path) {
     try {

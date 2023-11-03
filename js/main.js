@@ -1,22 +1,53 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    
     // Get references to HTML elements
     const canvas = document.getElementById('canvas');
-    
-    // Initialize WebGL and load shaders
-    const {gl, shaderProgram} = initGL(canvas);
 
+    // Initialize WebGL
+    const gl = canvas.getContext('webgl');
+    if (!gl) {
+        alert('WebGL is not supported in your browser.');
+    }
+
+    // Load the vertex and fragment shaders
+    let vertexShaderSource = `
+        attribute vec4 coordinates;
+        uniform mat4 modelViewProjection;
+        varying vec3 fragOrientation;
+        
+        void main(void) {
+            gl_Position = modelViewProjection * coordinates;
+        
+            // Calculate orientation (rotation)
+            mat4 rotationMatrix = mat4(modelViewProjection);
+            fragOrientation = mat3(rotationMatrix) * coordinates.xyz;
+        }
+    `;
+
+    let fragmentShaderSource = `
+        precision highp float;
+        varying vec3 fragOrientation;
+        uniform vec4 color;
+        
+        void main(void) {
+            // Use fragOrientation to compute the fragment color
+            vec3 orientation = normalize(fragOrientation);
+            vec3 colorValues = (orientation + 1.0) * 0.5; // Map orientation to color values
+            gl_FragColor = vec4(colorValues, 1.0); // Alpha is fully opaque
+        }
+    `;
+    
+    const shaderProgram = makeProgram(gl, vertexShaderSource, fragmentShaderSource);
+    gl.useProgram(shaderProgram);
+
+    // Fix depth buffer issues
+    gl.enable(gl.DEPTH_TEST);
+    
     // Load the model data
     let modelData = await loadOBJ("./obj/cow.obj");
 
     // Create buffer objects
-    const vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, modelData.vertices, gl.STATIC_DRAW);
-
-    const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, modelData.indices, gl.STATIC_DRAW);
+    makeBuffer(gl, modelData.vertices, gl.ARRAY_BUFFER);
+    makeBuffer(gl, modelData.indices, gl.ELEMENT_ARRAY_BUFFER);
 
     // Specify shader attributes and uniforms
     const coordinates = gl.getAttribLocation(shaderProgram, 'coordinates');
