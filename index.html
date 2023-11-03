@@ -18,6 +18,7 @@
         <script src="./js/gl-utils.js"></script>
         <script src="./js/main.js"></script>
         <script id="fragment-shader" type="x-shader/x-fragment">
+            // Fragment shader
             precision highp float;
             varying vec3 fragOrientation;
             uniform vec4 color;
@@ -30,6 +31,7 @@
             }
         </script>
         <script id="vertex-shader" type="x-shader/x-vertex">
+            // Vertex shader
             attribute vec4 coordinates;
             uniform mat4 modelViewProjection;
             varying vec3 fragOrientation;
