@@ -9,51 +9,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // Load the vertex and fragment shaders
-    let vertexShaderSource = `
-        attribute vec4 coordinates;
-        uniform mat4 modelViewProjection;
-        varying vec3 fragOrientation;
-        
-        void main(void) {
-            gl_Position = modelViewProjection * coordinates;
-        
-            // Calculate orientation (rotation)
-            mat4 rotationMatrix = mat4(modelViewProjection);
-            fragOrientation = mat3(rotationMatrix) * coordinates.xyz;
-        }
-    `;
-
-    let fragmentShaderSource = `
-        precision highp float;
-        varying vec3 fragOrientation;
-        uniform vec4 color;
-        
-        void main(void) {
-            // Use fragOrientation to compute the fragment color
-            vec3 orientation = normalize(fragOrientation);
-            vec3 colorValues = (orientation + 1.0) * 0.5; // Map orientation to color values
-            gl_FragColor = vec4(colorValues, 1.0); // Alpha is fully opaque
-        }
-    `;
-    
+    let vertexShaderSource = document.getElementById('vertex-shader').text;
+    let fragmentShaderSource = document.getElementById('fragment-shader').text;
     const shaderProgram = makeProgram(gl, vertexShaderSource, fragmentShaderSource);
-    gl.useProgram(shaderProgram);
 
-    // Fix depth buffer issues
-    gl.enable(gl.DEPTH_TEST);
-    
     // Load the model data
     let modelData = await loadOBJ("./obj/cow.obj");
 
     // Create buffer objects
     makeBuffer(gl, modelData.vertices, gl.ARRAY_BUFFER);
     makeBuffer(gl, modelData.indices, gl.ELEMENT_ARRAY_BUFFER);
-
+    
+    gl.useProgram(shaderProgram);
+    
     // Specify shader attributes and uniforms
     const coordinates = gl.getAttribLocation(shaderProgram, 'coordinates');
     const modelViewProjection = gl.getUniformLocation(shaderProgram, 'modelViewProjection');
     const color = gl.getUniformLocation(shaderProgram, 'color');
-
+    
     gl.vertexAttribPointer(coordinates, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinates);
 
@@ -97,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Function to apply inertia and render the model
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
 
         // Apply rotational velocity
         mat4.rotate(modelMatrix, modelMatrix, rotationVelocityX, [1, 0, 0]);
