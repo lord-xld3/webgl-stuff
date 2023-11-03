@@ -1,18 +1,23 @@
-// Compile, link, and load shaders
+// Compile, link, and return a shader program
 function makeProgram(gl, vertexShaderSource, fragmentShaderSource) {
-    
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vertexShader, vertexShaderSource);
-    gl.compileShader(vertexShader);
+    function makeShader(shaderSource, shaderType) {
+        const shader = gl.createShader(shaderType);
+        gl.shaderSource(shader, shaderSource);
+        gl.compileShader(shader);
 
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragmentShader, fragmentShaderSource);
-    gl.compileShader(fragmentShader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            const info = gl.getShaderInfoLog(shader);
+            throw new Error(`Could not compile shader from ${shaderSource}. \n\n${info}`);
+        }
+
+        return shader;
+    }
+    const vertexShader = makeShader(vertexShaderSource, gl.VERTEX_SHADER);
+    const fragmentShader = makeShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
 
     const shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
-
     gl.linkProgram(shaderProgram);
 
     return shaderProgram;

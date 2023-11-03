@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>SPINNY COW!</title>
-    <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-    <canvas id="canvas"></canvas>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.0/gl-matrix.js"></script>
-    <script src="./js/gl-utils.js"></script>
-    <script src="./js/main.js"></script>
-    
-    <script id="fragment-shader" type="x-shader/x-fragment">
-        precision highp float;
-        varying vec3 fragOrientation;
-        uniform vec4 color;
-        
-        void main(void) {
-            // Use fragOrientation to compute the fragment color
-            vec3 orientation = normalize(fragOrientation);
-            vec3 colorValues = (orientation + 1.0) * 0.5; // Map orientation to color values
-            gl_FragColor = vec4(colorValues, 1.0); // Alpha is fully opaque
-        }
-    </script>
-    
-    <script id="vertex-shader" type="x-shader/x-vertex">
-        attribute vec4 coordinates;
-        uniform mat4 modelViewProjection;
-        varying vec3 fragOrientation;
-        
-        void main(void) {
-            gl_Position = modelViewProjection * coordinates;
-        
-            // Calculate orientation (rotation)
-            mat4 rotationMatrix = mat4(modelViewProjection);
-            fragOrientation = mat3(rotationMatrix) * coordinates.xyz;
-        }
-    </script>
-
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=1024, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="keywords" content="webgl, glsl, shader, fragment shader, vertex shader, webgl demo, webgl example, 3d, interactive">
+        <meta name="description" content="A spinning cow.">
+        <meta name="author" content="Kyle Simmons">
+        <meta name="webgl" content="1">
+        <title>Spinny cow!</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="shortcut icon" href="./img/cowicon.png">
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.0/gl-matrix.js"></script>
+        <script src="./js/gl-utils.js"></script>
+        <script src="./js/main.js"></script>
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision highp float;
+            varying vec3 fragOrientation;
+            uniform vec4 color;
+            
+            void main(void) {
+                // Use fragOrientation to compute the fragment color
+                vec3 orientation = normalize(fragOrientation);
+                vec3 colorValues = (orientation + 1.0) * 0.5; // Map orientation to color values
+                gl_FragColor = vec4(colorValues, 1.0); // Alpha is fully opaque
+            }
+        </script>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec4 coordinates;
+            uniform mat4 modelViewProjection;
+            varying vec3 fragOrientation;
+            
+            void main(void) {
+                gl_Position = modelViewProjection * coordinates;
+            
+                // Calculate orientation (rotation)
+                mat4 rotationMatrix = mat4(modelViewProjection);
+                fragOrientation = mat3(rotationMatrix) * coordinates.xyz;
+            }
+        </script>
+    </body>
 </html>
